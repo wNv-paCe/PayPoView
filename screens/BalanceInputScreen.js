@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 const BalanceInputScreen = () => {
@@ -8,30 +16,33 @@ const BalanceInputScreen = () => {
 
   const handleConfirmBalance = () => {
     if (balance) {
+      Keyboard.dismiss(); // 隐藏键盘
       navigation.navigate("BillPayments", { balance }); // 将余额传递给下一个页面
     }
   };
 
   return (
-    <View style={styles.container}>
-      {/* 欢迎消息，固定在屏幕上方 */}
-      <View style={styles.header}>
-        <Text style={styles.welcome}>PayPoView</Text>
-      </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        {/* 欢迎消息，固定在屏幕上方 */}
+        <View style={styles.header}>
+          <Text style={styles.welcome}>PayPoView</Text>
+        </View>
 
-      {/* 输入余额部分，居中显示 */}
-      <View style={styles.centeredContent}>
-        <Text style={styles.label}>Enter your current balance:</Text>
-        <TextInput
-          style={styles.input}
-          value={balance}
-          onChangeText={setBalance}
-          keyboardType="numeric"
-          placeholder="Enter balance"
-        />
-        <Button title="Confirm" onPress={handleConfirmBalance} />
+        {/* 输入余额部分，居中显示 */}
+        <View style={styles.centeredContent}>
+          <Text style={styles.label}>Enter your current balance:</Text>
+          <TextInput
+            style={styles.input}
+            value={balance}
+            onChangeText={setBalance}
+            keyboardType="numeric"
+            placeholder="Enter balance"
+          />
+          <Button title="Confirm" onPress={handleConfirmBalance} />
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

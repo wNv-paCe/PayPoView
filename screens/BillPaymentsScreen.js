@@ -7,6 +7,8 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker"; // 导入日期选择器
 
@@ -18,9 +20,11 @@ const BillPaymentsScreen = ({ route }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const addBillPayment = () => {
-    const payment = { amount: parseFloat(amount), date: date.toISOString() };
-    setBillPayments([...billPayments, payment]);
-    setAmount("");
+    if (amount) {
+      const payment = { amount: parseFloat(amount), date: date.toISOString() };
+      setBillPayments([...billPayments, payment]);
+      setAmount("");
+    }
   };
 
   const handleSave = () => {
@@ -29,51 +33,53 @@ const BillPaymentsScreen = ({ route }) => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* 加粗并改变颜色的余额显示 */}
-      <Text style={styles.balance}>Balance: ${balance}</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        {/* 加粗并改变颜色的余额显示 */}
+        <Text style={styles.balance}>Balance: ${balance}</Text>
 
-      <Text style={styles.label}>Add a bill payment:</Text>
-      <TextInput
-        style={styles.input}
-        value={amount}
-        onChangeText={setAmount}
-        keyboardType="numeric"
-        placeholder="Enter bill payment amount"
-      />
+        <Text style={styles.label}>Add a bill payment:</Text>
+        <TextInput
+          style={styles.input}
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="numeric"
+          placeholder="Enter bill payment amount"
+        />
 
-      {/* 直接显示日期选择器 */}
-      <Text style={styles.label}>Select Date:</Text>
-      <DateTimePicker
-        value={date}
-        mode="date"
-        display="inline" // 直接显示日历
-        onChange={(event, selectedDate) => {
-          if (selectedDate) {
-            setDate(selectedDate);
-          }
-        }}
-      />
+        {/* 直接显示日期选择器 */}
+        <Text style={styles.label}>Select Date:</Text>
+        <DateTimePicker
+          value={date}
+          mode="date"
+          display="inline" // 直接显示日历
+          onChange={(event, selectedDate) => {
+            if (selectedDate) {
+              setDate(selectedDate);
+            }
+          }}
+        />
 
-      <Button title="Add Bill Payment" onPress={addBillPayment} />
+        <Button title="Add Bill Payment" onPress={addBillPayment} />
 
-      {/* 自定义保存按钮 */}
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Save</Text>
-      </TouchableOpacity>
+        {/* 自定义保存按钮 */}
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
 
-      {/* 展示 30 天内的账单支付记录 */}
-      <Text style={styles.label}>30-day bill payment history:</Text>
-      <FlatList
-        data={billPayments}
-        renderItem={({ item }) => (
-          <Text>
-            {new Date(item.date).toLocaleDateString()}: {item.amount} CAD
-          </Text>
-        )}
-        keyExtractor={(item, index) => index.toString()}
-      />
-    </View>
+        {/* 展示 30 天内的账单支付记录 */}
+        <Text style={styles.label}>30-day bill payment history:</Text>
+        <FlatList
+          data={billPayments}
+          renderItem={({ item }) => (
+            <Text>
+              {new Date(item.date).toLocaleDateString()}: {item.amount} CAD
+            </Text>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
